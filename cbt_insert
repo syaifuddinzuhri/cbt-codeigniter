@@ -1,0 +1,455 @@
+INSERT INTO
+    `cbt_konfigurasi` (
+        `konfigurasi_id`,
+        `konfigurasi_kode`,
+        `konfigurasi_isi`,
+        `konfigurasi_keterangan`
+    )
+VALUES
+    (
+        1,
+        'link_login_operator',
+        'ya',
+        'Menampilkan Link Login Operator'
+    ),
+    (
+        2,
+        'cbt_nama',
+        'Computer Based-Test',
+        'Nama Penyelenggara ZYACBT'
+    ),
+    (
+        3,
+        'cbt_keterangan',
+        'Ujian Online Berbasis Komputer',
+        'Keterangan Penyelenggara ZYACBT'
+    ),
+    (
+        4,
+        'cbt_mobile_lock_xambro',
+        'tidak',
+        'Melakukan Lock pada browser mobile agar menggunakan Xambro Saja'
+    ),
+    (
+        5,
+        'cbt_informasi',
+        '<p>Silahkan pilih Tes yang diikuti dari daftar tes yang tersedia dibawah ini. Apabila tes tidak muncul, silahkan menghubungi Operator yang bertugas.</p>\r\n',
+        'Informasi yang diberikan di Dashboard peserta tes'
+    );
+
+INSERT INTO
+    `cbt_modul` (`modul_id`, `modul_nama`, `modul_aktif`)
+VALUES
+    (9, 'Default', 1);
+
+
+INSERT INTO `user_level` (`id`, `level`, `keterangan`) VALUES
+(1, 'admin', 'Administrator'),
+(7, 'operator-soal', 'Operator Soal'),
+(8, 'operator-tes', 'Operator Tes');
+
+INSERT INTO
+    `user` (
+        `id`,
+        `username`,
+        `password`,
+        `nama`,
+        `opsi1`,
+        `opsi2`,
+        `keterangan`,
+        `level`,
+        `ts`
+    )
+VALUES
+    (
+        1,
+        'admin',
+        'd033e22ae348aeb5660fc2140aec35850c4da997',
+        'Syaifuddin Zuhri',
+        '',
+        '',
+        '',
+        'admin',
+        '2015-07-29 18:12:03'
+    ),
+    (
+        4,
+        'operator',
+        'fe96dd39756ac41b74283a9292652d366d73931f',
+        'Operator',
+        '',
+        '',
+        'Operator',
+        'operator-soal',
+        '2018-03-30 12:58:55'
+    );
+
+INSERT INTO
+    `user_akses` (`id`, `level`, `kode_menu`, `add`, `edit`)
+VALUES
+    (254, 'operator-soal', 'modul-daftar', 1, 1),
+    (255, 'operator-soal', 'modul-filemanager', 1, 1),
+    (256, 'operator-soal', 'modul-import', 1, 1),
+    (257, 'operator-soal', 'modul-soal', 1, 1),
+    (258, 'operator-soal', 'modul-topik', 1, 1),
+    (259, 'operator-tes', 'tes-hasil-operator', 1, 1),
+    (260, 'operator-tes', 'tes-token', 1, 1),
+    (
+        481,
+        'admin',
+        'laporan-analisis-butir-soal',
+        1,
+        1
+    ),
+    (482, 'admin', 'peserta-kartu', 1, 1),
+    (483, 'admin', 'peserta-group', 1, 1),
+    (484, 'admin', 'peserta-daftar', 1, 1),
+    (485, 'admin', 'modul-daftar', 1, 1),
+    (486, 'admin', 'tes-daftar', 1, 1),
+    (487, 'admin', 'tool-backup', 1, 1),
+    (488, 'admin', 'tes-evaluasi', 1, 1),
+    (489, 'admin', 'tool-exportimport-soal', 1, 1),
+    (490, 'admin', 'modul-filemanager', 1, 1),
+    (491, 'admin', 'tes-hasil', 1, 1),
+    (492, 'admin', 'peserta-import', 1, 1),
+    (493, 'admin', 'modul-import', 1, 1),
+    (494, 'admin', 'modul-import-word', 1, 1),
+    (496, 'admin', 'user_level', 1, 1),
+    (497, 'admin', 'user_menu', 1, 1),
+    (498, 'admin', 'user_atur', 1, 1),
+    (499, 'admin', 'user-zyacbt', 1, 1),
+    (500, 'admin', 'laporan-rekap', 1, 1),
+    (501, 'admin', 'modul-soal', 1, 1),
+    (502, 'admin', 'tes-tambah', 1, 1),
+    (503, 'admin', 'tes-token', 1, 1),
+    (504, 'admin', 'modul-topik', 1, 1);
+
+INSERT INTO
+    `user_level` (`id`, `level`, `keterangan`)
+VALUES
+    (1, 'admin', 'Administrator'),
+    (7, 'operator-soal', 'Operator Soal'),
+    (8, 'operator-tes', 'Operator Tes');
+
+INSERT INTO
+    `user_menu` (
+        `id`,
+        `tipe`,
+        `parent`,
+        `kode_menu`,
+        `nama_menu`,
+        `url`,
+        `icon`,
+        `urutan`
+    )
+VALUES
+    (
+        1,
+        0,
+        '',
+        'user',
+        'Pengaturan',
+        '#',
+        'fa fa-user',
+        20
+    ),
+    (
+        3,
+        1,
+        'user',
+        'user_atur',
+        'Pengaturan User',
+        'manager/useratur',
+        'fa fa-circle-o',
+        5
+    ),
+    (
+        4,
+        1,
+        'user',
+        'user_level',
+        'Pengaturan Level',
+        'manager/userlevel',
+        'fa fa-circle-o',
+        6
+    ),
+    (
+        5,
+        1,
+        'user',
+        'user_menu',
+        'Pengaturan Menu',
+        'manager/usermenu',
+        'fa fa-circle-o',
+        7
+    ),
+    (
+        6,
+        0,
+        '',
+        'modul',
+        'Data Modul',
+        '#',
+        'fa fa-book',
+        2
+    ),
+    (
+        7,
+        1,
+        'modul',
+        'modul-daftar',
+        'Daftar Soal',
+        'manager/modul_daftar',
+        'fa fa-circle-o',
+        5
+    ),
+    (
+        8,
+        1,
+        'modul',
+        'modul-topik',
+        'Topik',
+        'manager/modul_topik',
+        'fa fa-circle-o',
+        2
+    ),
+    (
+        10,
+        0,
+        '',
+        'peserta',
+        'Data Peserta',
+        '#',
+        'fa fa-users',
+        3
+    ),
+    (
+        11,
+        1,
+        'peserta',
+        'peserta-daftar',
+        'Daftar Peserta',
+        'manager/peserta_daftar',
+        'fa fa-circle-o',
+        2
+    ),
+    (
+        12,
+        1,
+        'peserta',
+        'peserta-group',
+        'Daftar Group',
+        'manager/peserta_group',
+        'fa fa-circle-o',
+        1
+    ),
+    (
+        13,
+        1,
+        'peserta',
+        'peserta-import',
+        'Import Data Peserta',
+        'manager/peserta_import',
+        'fa fa-circle-o',
+        3
+    ),
+    (
+        14,
+        0,
+        '',
+        'tes',
+        'Data Tes',
+        '#',
+        'fa fa-tasks',
+        4
+    ),
+    (
+        15,
+        1,
+        'tes',
+        'tes-tambah',
+        'Tambah Tes',
+        'manager/tes_tambah',
+        'fa fa-circle-o',
+        1
+    ),
+    (
+        16,
+        1,
+        'tes',
+        'tes-daftar',
+        'Daftar Tes',
+        'manager/tes_daftar',
+        'fa fa-circle-o',
+        2
+    ),
+    (
+        17,
+        1,
+        'tes',
+        'tes-hasil',
+        'Hasil Tes',
+        'manager/tes_hasil',
+        'fa fa-circle-o',
+        6
+    ),
+    (
+        18,
+        1,
+        'modul',
+        'modul-soal',
+        'Soal',
+        'manager/modul_soal',
+        'fa fa-circle-o',
+        3
+    ),
+    (
+        19,
+        1,
+        'tes',
+        'tes-token',
+        'Token',
+        'manager/tes_token',
+        'fa fa-circle-o',
+        8
+    ),
+    (
+        22,
+        1,
+        'modul',
+        'modul-filemanager',
+        'File Manager',
+        'manager/modul_filemanager',
+        'fa fa-circle-o',
+        6
+    ),
+    (
+        24,
+        1,
+        'modul',
+        'modul-import',
+        'Import Soal Spreadsheet',
+        'manager/modul_import',
+        'fa fa-circle-o',
+        4
+    ),
+    (
+        25,
+        1,
+        'tes',
+        'tes-evaluasi',
+        'Evaluasi Tes',
+        'manager/tes_evaluasi',
+        'fa fa-circle-o',
+        5
+    ),
+    (
+        28,
+        1,
+        'tes',
+        'tes-hasil-operator',
+        'Hasil Tes Operator',
+        'manager/tes_hasil_operator',
+        'fa fa-circle-o',
+        10
+    ),
+    (
+        30,
+        0,
+        '',
+        'tool',
+        'Tool',
+        '#',
+        'fa fa-wrench',
+        6
+    ),
+    (
+        31,
+        1,
+        'tool',
+        'tool-backup',
+        'Database',
+        'manager/tool_backup',
+        'fa fa-database',
+        1
+    ),
+    (
+        32,
+        1,
+        'tes-laporan',
+        'laporan-rekap',
+        'Rekap Hasil Tes',
+        'manager/laporan_rekap_hasil',
+        'fa fa-circle-o',
+        7
+    ),
+    (
+        33,
+        1,
+        'tool',
+        'tool-exportimport-soal',
+        'Export / Import Soal',
+        'manager/tool_exportimport_soal',
+        'fa fa-circle-o',
+        2
+    ),
+    (
+        34,
+        1,
+        'user',
+        'user-zyacbt',
+        'Pengaturan ZYACBT',
+        'manager/pengaturan_zyacbt',
+        'fa fa-circle-o',
+        1
+    ),
+    (
+        37,
+        1,
+        'peserta',
+        'peserta-kartu',
+        'Cetak Kartu',
+        'manager/peserta_kartu',
+        'fa fa-circle-o',
+        5
+    ),
+    (
+        38,
+        0,
+        '',
+        'tes-laporan',
+        'Laporan',
+        '#',
+        'fa fa-print',
+        5
+    ),
+    (
+        41,
+        1,
+        'tes-laporan',
+        'laporan-analisis-butir-soal',
+        'Analisis Butir Soal',
+        'manager/laporan_analisis_butir_soal',
+        'fa fa-circle-o',
+        1
+    ),
+    (
+        42,
+        1,
+        'tes-laporan',
+        'laporan-analisis-soal',
+        'Analisis Soal',
+        'manager/laporan_analisis_soal',
+        'fa fa-circle-o',
+        2
+    ),
+    (
+        43,
+        1,
+        'modul',
+        'modul-import-word',
+        'Import Soal Word',
+        'manager/modul_import_word',
+        'fa fa-circle-o',
+        4
+    );
