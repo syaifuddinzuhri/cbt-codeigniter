@@ -16,14 +16,14 @@ class Pengaturan_zyacbt extends Member_Controller {
         $data['kode_menu'] = $this->kode_menu;
         $data['url'] = $this->url;
         
-        $this->template->display_admin($this->kelompok.'/pengaturan_zyacbt_view', 'Pengaturan ZYACBT', $data);
+        $this->template->display_admin($this->kelompok.'/pengaturan_zyacbt_view', 'Pengaturan CBT', $data);
     }
 
     function simpan(){
         $this->load->library('form_validation');
         
-        $this->form_validation->set_rules('zyacbt-nama', 'Nama ZYACBT','required|strip_tags');
-        $this->form_validation->set_rules('zyacbt-keterangan', 'Keterangan ZYACBT','required|strip_tags');
+        $this->form_validation->set_rules('zyacbt-nama', 'Nama CBT','required|strip_tags');
+        $this->form_validation->set_rules('zyacbt-keterangan', 'Keterangan CBT','required|strip_tags');
 		$this->form_validation->set_rules('zyacbt-link-login', 'Link Login Operator','required|strip_tags');
 		$this->form_validation->set_rules('zyacbt-mobile-lock-xambro', 'Lock Mobile Exam Browser','required|strip_tags');
 		$this->form_validation->set_rules('zyacbt-informasi', 'Informasi Peserta Tes','required');

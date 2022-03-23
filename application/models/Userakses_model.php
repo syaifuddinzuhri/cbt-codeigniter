@@ -1,9 +1,9 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
-* ZYA CBT
-* Achmad Lutfi
-* achmdlutfi@gmail.com
-* achmadlutfi.wordpress.com
+* CBT
+* Syaifuddin Zuhri
+* mochammadsyaifuddinz@gmail.com
+* Syaifuddin Zuhri
 */
 class Userakses_model extends CI_Model{
     function save($data){

@@ -32,21 +32,21 @@
         <div class="box-body">
             <dl>
                 <dd>
-                    Dengan menggunakan ZYA CBT, maka anda setuju untuk :
+                    Dengan menggunakan CBT, maka anda setuju untuk :
                     <ol>
-                        <li>Tidak mengubah Nama Aplikasi Ujian Online <b>ZYA CBT</b> menjadi nama aplikasi lain</li>
-                        <li>Tidak mengubah footer yang menunjukkan alamat website Aplikasi Ujian Online ZYA CBT</li>
-                        <li>Tidak menjual Aplikasi Ujian Online ZYA CBT. Tetapi anda diperbolehkan untuk mengambil keuntungan dari jasa proses instalasi, konsultasi dan lain sebagainya yang berkaitan dengan Aplikasi Ujian Online ZYA CBT</li>
+                        <li>Tidak mengubah Nama Aplikasi Ujian Online <b>CBT</b> menjadi nama aplikasi lain</li>
+                        <li>Tidak mengubah footer yang menunjukkan alamat website Aplikasi Ujian Online CBT</li>
+                        <li>Tidak menjual Aplikasi Ujian Online CBT. Tetapi anda diperbolehkan untuk mengambil keuntungan dari jasa proses instalasi, konsultasi dan lain sebagainya yang berkaitan dengan Aplikasi Ujian Online CBT</li>
                         <li>Tidak menhapus tribute dan Perjanjian Penggunaan</li>
                     </ol>
-                    Semoga Aplikasi Ujian Online ZYA CBT dapat bermanfaat untuk kita semua.
+                    Semoga Aplikasi Ujian Online CBT dapat bermanfaat untuk kita semua.
                 </dd>
             </dl>
         </div><!-- /.box-body -->
     </div><!-- /.box -->
 	<div class="callout callout-info">
     	<h4>Informasi</h4>
-        <p>Ini adalah area administratif ZYA CBT, yang memiliki platform dan bahasa user-friendly untuk membuat, mengelola dan melaksanakan ujian online.</p>
+        <p>Ini adalah area administratif CBT, yang memiliki platform dan bahasa user-friendly untuk membuat, mengelola dan melaksanakan ujian online.</p>
     </div>
     <div class="box">
         <div class="box-header with-border">
