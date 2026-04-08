@@ -1,16 +1,13 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
-* CBT
-* Syaifuddin Zuhri
-* mochammadsyaifuddinz@gmail.com
-* Syaifuddin Zuhri
+* ZYA CBT
+* Achmad Lutfi
+* achmdlutfi@gmail.com
+* achmadlutfi.wordpress.com
 */
 class Tes_dashboard extends Tes_Controller {
 	private $kelompok = 'ujian';
 	private $url = 'tes_dashboard';
-	private $username;
-    private $user_id;
-    private $data_user;
 	
     function __construct(){
 		parent:: __construct();
@@ -25,9 +22,6 @@ class Tes_dashboard extends Tes_Controller {
 		$this->load->model('cbt_jawaban_model');
 		$this->load->model('cbt_tes_soal_model');
 		$this->load->model('cbt_tes_soal_jawaban_model');
-		$this->username = $this->access_tes->get_username();
-        $this->data_user = $this->cbt_user_model->get_by_kolom_limit('user_name', $this->username, 1)->row();
-        $this->user_id = $this->cbt_user_model->get_by_kolom_limit('user_name', $this->username, 1)->row()->user_id;
 	}
     
     public function index(){
@@ -62,8 +56,13 @@ class Tes_dashboard extends Tes_Controller {
 		if($query_info->num_rows()>0){
 			$query_info = $query_info->row();
 			$data['informasi'] = $query_info->konfigurasi_isi;
-			$data['data_user'] = $this->data_user;
 		}
+		
+		// Menghapus token tes jika terisi
+		if($this->access_tes->is_token()){
+			$this->access_tes->remove_token();
+		}
+
         $this->template->display_tes($this->kelompok.'/tes_dashboard_view', 'Dashboard', $data);
     }
 
@@ -199,6 +198,9 @@ class Tes_dashboard extends Tes_Controller {
 						}
 					}
 					if($is_ok==1){
+						// Memasukkan token ke session
+						$this->session->set_userdata('cbt_tes_token', $token);
+							
 						// Mengecek apakah test mempunyai data soal
 						if($this->cbt_tes_topik_set_model->count_by_kolom('tset_tes_id', $query_tes->tes_id)->row()->hasil>0){
 							// Memulai transaction mysql

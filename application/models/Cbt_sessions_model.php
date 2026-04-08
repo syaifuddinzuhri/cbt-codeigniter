@@ -1,16 +1,13 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
-* CBT
-* Syaifuddin Zuhri
-* mochammadsyaifuddinz@gmail.com
-* Syaifuddin Zuhri
+* ZYA CBT
+* Achmad Lutfi
+* achmdlutfi@gmail.com
+* achmadlutfi.wordpress.com
 */
 class Cbt_sessions_model extends CI_Model{
 	public $table = 'cbt_sessions';
 	
-	function __construct(){
-        parent::__construct();
-    }
 	
     function save($data){
         $this->db->insert($this->table, $data);
@@ -58,4 +55,11 @@ class Cbt_sessions_model extends CI_Model{
                  ->from($this->table);
         return $this->db->get();
 	}
+	
+	function delete_by_username($username){
+		$now = date('Y-m-d H:i:s');
+		$tanda = '@ZYACBT@';
+        $this->db->where('(DATE(ts)=DATE("'.$now.'") AND data LIKE "%'.$tanda.$username.$tanda.'%")')
+                 ->delete($this->table);
+    }
 }

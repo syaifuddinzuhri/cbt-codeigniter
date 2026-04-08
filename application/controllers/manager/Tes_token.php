@@ -1,9 +1,9 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
-* CBT
-* Syaifuddin Zuhri
-* mochammadsyaifuddinz@gmail.com
-* Syaifuddin Zuhri
+* ZYA CBT
+* Achmad Lutfi
+* achmdlutfi@gmail.com
+* achmadlutfi.wordpress.com
 */
 class Tes_token extends Member_Controller {
 	private $kode_menu = 'tes-token';
@@ -56,6 +56,7 @@ class Tes_token extends Member_Controller {
                 $data['token_user_id'] = $user_id;
                 $data['token_aktif'] = $aktif;
 				$data['token_tes_id'] = $tes_id;
+				$data['token_ts'] = date('Y-m-d H:i:s');
 
         		$this->cbt_tes_token_model->save($data);
         		$i=0;
@@ -88,6 +89,7 @@ class Tes_token extends Member_Controller {
                 $data['token_user_id'] = $user_id;
                 $data['token_aktif'] = $aktif;
 				$data['token_tes_id'] = $tes_id;
+				$data['token_ts'] = date('Y-m-d H:i:s');
 
         		$this->cbt_tes_token_model->save($data);
 				

@@ -1,9 +1,9 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
-* CBT
-* Syaifuddin Zuhri
-* mochammadsyaifuddinz@gmail.com
-* Syaifuddin Zuhri
+* ZYA CBT
+* Achmad Lutfi
+* achmdlutfi@gmail.com
+* achmadlutfi.wordpress.com
 */
 class Useratur extends Member_Controller {
     private $url = 'manager/useratur';

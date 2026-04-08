@@ -1,16 +1,13 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
-* CBT
-* Syaifuddin Zuhri
-* mochammadsyaifuddinz@gmail.com
-* Syaifuddin Zuhri
+* ZYA CBT
+* Achmad Lutfi
+* achmdlutfi@gmail.com
+* achmadlutfi.wordpress.com
 */
 class Master_model extends CI_Model{
 	public $table = '';
 	
-	function __construct(){
-        parent::__construct();
-    }
 	
     function save($data){
         $this->db->insert($this->table, $data);
