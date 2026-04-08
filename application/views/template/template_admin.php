@@ -5,9 +5,9 @@
     <title><?php if(!empty($site_name)){ echo $site_name; } ?> | <?php echo $title; ?></title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta content='width=device-width, initial-scale=1, maximum-scale=10, user-scalable=yes' name='viewport'>
-	<meta name="description" content="Aplikasi Ujian Online ZAYCBT">
+	<meta name="description" content="Aplikasi Ujian Online MANUSGI CBT">
 	<meta name="keywords" content="Aplikasi Ujian Online ZYACBT">
-	<meta name="author" content="Achmad Lutfi">
+	<meta name="author" content="Syaifuddin Zuhri">
     <!-- Bootstrap 3.3.4 -->
     <link href="<?php echo base_url(); ?>public/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
     <!-- Font Awesome Icons -->
@@ -138,7 +138,7 @@
           <!-- mini logo for sidebar mini 50x50 pixels -->
           <span class="logo-mini"><b>CBT</b></span>
           <!-- logo for regular state and mobile devices -->
-          <span class="logo-lg"><b>ZYA CBT</b></span>
+          <span class="logo-lg"><b>MANUSGI CBT</b></span>
         </a>
 
         <!-- Header Navbar: style can be found in header.less -->
@@ -226,7 +226,7 @@
         <div class="pull-right hidden-xs">
           <b>Version</b> <?php if(!empty($site_version)){ echo $site_version; } ?>
         </div>
-        <strong>&copy; 2026 achmadlutfi.wordpress.com</strong>
+        <strong>&copy; 2026 manusunangiri@gmail.com</strong>
       </footer>
 
     </div><!-- ./wrapper -->

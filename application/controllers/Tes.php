@@ -1,10 +1,10 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 /**
-* ZYA CBT
-* Achmad Lutfi
-* achmdlutfi@gmail.com
-* achmadlutfi.wordpress.com
+* MANUSGI CBT
+* Syaifuddin Zuhri
+* zuhrideveloper@gmail.com
+* manusunangiri@gmail.com
 */
 class Tes extends CI_Controller {
 

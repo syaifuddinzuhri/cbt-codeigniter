@@ -1,9 +1,9 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
-* ZYA CBT
-* Achmad Lutfi
-* achmdlutfi@gmail.com
-* achmadlutfi.wordpress.com
+* MANUSGI CBT
+* Syaifuddin Zuhri
+* zuhrideveloper@gmail.com
+* manusunangiri@gmail.com
 */
 class Tes_token extends Member_Controller {
 	private $kode_menu = 'tes-token';

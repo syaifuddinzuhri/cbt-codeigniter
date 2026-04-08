@@ -21,7 +21,7 @@
     			<div class="login-logo">
         			<b>User Login</b>
       			</div><!-- /.login-logo -->
-      			<div class="login-box-body">
+      			<div class="login-box-body" style="border-radius: 10px;">
         			<p class="login-box-msg">Masukkan Username dan Password</p>
                 <div id="form-pesan"></div>
           			<div class="form-group has-feedback">
