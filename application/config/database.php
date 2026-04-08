@@ -87,6 +87,7 @@ $db['default'] = array(
 	'cachedir' => '',
 	'char_set' => 'utf8',
 	'dbcollat' => 'utf8_general_ci',
+	'after_set_names' => "SET time_zone = '+07:00'",
 	'swap_pre' => '',
 	'encrypt' => FALSE,
 	'compress' => FALSE,
