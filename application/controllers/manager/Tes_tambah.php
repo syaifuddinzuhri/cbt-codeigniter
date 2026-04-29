@@ -118,19 +118,16 @@ class Tes_tambah extends Member_Controller {
         $this->form_validation->set_rules('tambah-rentang-waktu', 'Rentang Waktu Pengerjaan Tes','required|strip_tags');
         $this->form_validation->set_rules('tambah-waktu', 'Waktu Pengerjaan Tes','required|integer|strip_tags');
         $this->form_validation->set_rules('tambah-group[]', 'Grup','required|strip_tags');
-        $this->form_validation->set_rules('tambah-poin', 'Poin Dasar','required|numeric|strip_tags');
-        $this->form_validation->set_rules('tambah-poin-salah', 'Poin Jawaban Salah','required|numeric|strip_tags');
-        $this->form_validation->set_rules('tambah-poin-kosong', 'Poin Jawaban Kosong','required|numeric|strip_tags');
-        
+
         if($this->form_validation->run() == TRUE){
-        	$tes_id = $this->input->post('tambah-id', true);
-        	$nama_lama = $this->input->post('tambah-nama-lama', true);
+            $tes_id = $this->input->post('tambah-id', true);
+            $nama_lama = $this->input->post('tambah-nama-lama', true);
             $data['tes_nama'] = $this->input->post('tambah-nama', true);
             $data['tes_detail'] = $this->input->post('tambah-deskripsi', true);
             $data['tes_duration_time'] = $this->input->post('tambah-waktu', true);
-            $data['tes_score_right'] = $this->input->post('tambah-poin', true);
-            $data['tes_score_wrong'] = $this->input->post('tambah-poin-salah', true);
-            $data['tes_score_unanswered'] = $this->input->post('tambah-poin-kosong', true);
+            $data['tes_score_right'] = 1;
+            $data['tes_score_wrong'] = 0;
+            $data['tes_score_unanswered'] = 0;
 
             $tunjukkan_hasil = $this->input->post('tambah-tunjukkan-hasil', true);
             if(!empty($tunjukkan_hasil)){
@@ -325,13 +322,8 @@ class Tes_tambah extends Member_Controller {
     private function hitung_skor($tes_id=null){
         $max_score = 0;
         if(!empty($tes_id)){
-            $query_tes = $this->cbt_tes_model->get_by_kolom_limit('tes_id', $tes_id, 1);
-            if($query_tes->num_rows()>0){
-                $query_tes = $query_tes->row();
-                $query_soal = $this->cbt_tes_topik_set_model->get_by_kolom('tset_tes_id', $tes_id)->result();
-                foreach ($query_soal as $soal) {
-                    $max_score = $max_score+($soal->tset_jumlah*$query_tes->tes_score_right);
-                }
+            if($this->cbt_tes_topik_set_model->count_by_kolom('tset_tes_id', $tes_id)->row()->hasil>0){
+                $max_score = 100;
             }
         }
         return $max_score;

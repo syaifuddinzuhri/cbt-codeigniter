@@ -52,14 +52,27 @@
 			<div class="box">
 				<div class="box-header with-border">
 					<div class="box-title">Daftar Jawaban</div>
+                    <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-primary btn-sm" onclick="export_excel()">Export ke Excel</button>
+                    </div>
 				</div><!-- /.box-header -->
 
                 <div class="box-body">
+                    <div id="form-pesan-import"></div>
+                    <?php echo form_open_multipart($url.'/import_nilai','id="form-import-nilai" class="form-inline"'); ?>
+                        <input type="hidden" name="tes-id" id="import-tes-id">
+                        <div class="form-group">
+                            <input type="file" name="userfile" id="import-nilai-file" class="form-control input-sm" accept=".xlsx">
+                        </div>
+                        <button type="submit" class="btn btn-success btn-sm">Import Nilai</button>
+                    </form>
+                    <br>
                     <input type="hidden" name="edit-pilihan" id="edit-pilihan">
 					<table id="table-jawaban" class="table table-bordered table-hover">
 						<thead>
                             <tr>
                                 <th>No.</th>
+                                <th>Peserta</th>
                                 <th>Soal</th>
                                 <th>Jawaban</th>
                                 <th></th>
@@ -67,6 +80,7 @@
                         </thead>
                         <tbody>
                             <tr>
+                                <td> </td>
                                 <td> </td>
                                 <td> </td>
                                 <td> </td>
@@ -137,8 +151,20 @@
 
         $("#modal-evaluasi").modal("show");
         $("#evaluasi-nilai").focus();
-        
+
         $("#modal-proses").modal('hide');
+    }
+
+    function export_excel(){
+        var tes = $('#pilih-tes').val();
+        var urutkan = $('#pilih-urutkan').val();
+
+        if(!tes){
+            notify_error('Pilih tes terlebih dahulu');
+            return false;
+        }
+
+        window.open("<?php echo site_url().'/'.$url; ?>/export/"+tes+"/"+urutkan, "_self");
     }
 
     $(function(){
@@ -167,6 +193,34 @@
             return false;
         });
 
+        $('#form-import-nilai').submit(function(){
+            $("#modal-proses").modal('show');
+            $('#form-pesan-import').html('');
+            $('#import-tes-id').val($('#pilih-tes').val());
+
+            var formData = new FormData(this);
+            $.ajax({
+                    url:"<?php echo site_url().'/'.$url; ?>/import_nilai",
+                    type:"POST",
+                    data:formData,
+                    cache:false,
+                    contentType:false,
+                    processData:false,
+                    success:function(respon){
+                        var obj = $.parseJSON(respon);
+                        $("#modal-proses").modal('hide');
+                        if(obj.status==1){
+                            $('#form-pesan-import').html(pesan_succ(obj.pesan));
+                            $('#import-nilai-file').val('');
+                            refresh_table();
+                        }else{
+                            $('#form-pesan-import').html(pesan_err(obj.pesan));
+                        }
+                    }
+            });
+            return false;
+        });
+
         $('#table-jawaban').DataTable({
                   "paging": true,
                   "iDisplayLength":25,
@@ -174,8 +228,9 @@
                   "bServerSide": true, 
                   "searching": false,
                   "aoColumns": [
-    					{"bSearchable": false, "bSortable": false, "sWidth":"20px"},
-    					{"bSearchable": false, "bSortable": false, "sWidth":"40%"},
+                        {"bSearchable": false, "bSortable": false, "sWidth":"20px"},
+                        {"bSearchable": false, "bSortable": false, "sWidth":"180px"},
+                        {"bSearchable": false, "bSortable": false, "sWidth":"35%"},
                         {"bSearchable": false, "bSortable": false},
                         {"bSearchable": false, "bSortable": false, "sWidth":"30px"}],
                   "sAjaxSource": "<?php echo site_url().'/'.$url; ?>/get_datatable/",

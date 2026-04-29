@@ -28,7 +28,24 @@ class Tes_kerjakan extends Tes_Controller {
         $this->username = $this->access_tes->get_username();
         $this->user_id = $this->cbt_user_model->get_by_kolom_limit('user_name', $this->username, 1)->row()->user_id;
 	}
-    
+
+    private function get_nilai_objektif_benar($tes_user_id){
+        $nilai = 1;
+        $query_komposisi = $this->cbt_tes_user_model->get_komposisi_soal_by_tesuser($tes_user_id);
+
+        if($query_komposisi->num_rows()>0){
+            $komposisi = $query_komposisi->row();
+            $total_essay = intval($komposisi->total_essay);
+            $total_objektif = intval($komposisi->total_objektif);
+
+            if($total_essay==0 AND $total_objektif>0){
+                $nilai = round(100/$total_objektif, 4);
+            }
+        }
+
+        return $nilai;
+    }
+
     public function index($tes_id=null){
         if(!empty($tes_id)){
             $data['nama'] = $this->access_tes->get_nama();
@@ -270,7 +287,7 @@ class Tes_kerjakan extends Tes_Controller {
 
                         // Mengupdate score, change time jika pilihan benar
                         if($query_jawaban->jawaban_benar==1){
-                            $data_tes_soal['tessoal_nilai'] = $query_tes->tes_score_right;
+                            $data_tes_soal['tessoal_nilai'] = $this->get_nilai_objektif_benar($tes_user_id);
                         }else{
                             $data_tes_soal['tessoal_nilai'] = $query_tes->tes_score_wrong;
                         }
@@ -297,7 +314,7 @@ class Tes_kerjakan extends Tes_Controller {
                         // Mengupdate change time, dan jawaban essay
                         $data_tes_soal['tessoal_jawaban_text'] = $jawaban;
                         if(strtoupper($query_soal->soal_kunci)==strtoupper($jawaban)){
-                            $data_tes_soal['tessoal_nilai'] = $query_tes->tes_score_right;
+                            $data_tes_soal['tessoal_nilai'] = $this->get_nilai_objektif_benar($tes_user_id);
                         }else{
                             $data_tes_soal['tessoal_nilai'] = $query_tes->tes_score_wrong;
                         }

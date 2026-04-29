@@ -272,9 +272,10 @@ class Cbt_tes_user_model extends CI_Model{
             $order = 'tesuser_id ASC';
         }
 
-        $this->db->select('cbt_tes_soal.tessoal_id, cbt_tes_soal.tessoal_jawaban_text, cbt_tes.*, cbt_soal.*')
+        $this->db->select('cbt_tes_soal.tessoal_id, cbt_tes_soal.tessoal_jawaban_text, cbt_tes.*, cbt_soal.*, cbt_user.user_name, cbt_user.user_firstname')
                  ->where('(soal_tipe="2" AND tessoal_jawaban_text IS NOT NULL AND tessoal_comment IS NULL '.$sql.' )')
                  ->from($this->table)
+                 ->join('cbt_user', 'cbt_tes_user.tesuser_user_id = cbt_user.user_id')
                  ->join('cbt_tes', 'cbt_tes_user.tesuser_tes_id = cbt_tes.tes_id')
                  ->join('cbt_tes_soal', 'cbt_tes_soal.tessoal_tesuser_id = cbt_tes_user.tesuser_id')
                  ->join('cbt_soal', 'cbt_tes_soal.tessoal_soal_id = cbt_soal.soal_id')
@@ -282,7 +283,123 @@ class Cbt_tes_user_model extends CI_Model{
                  ->limit($rows, $start);
         return $this->db->get();
     }
-    
+
+    function get_evaluasi_export($tes_id, $urutkan){
+        $sql = '';
+        if(!empty($tes_id)){
+            $sql = ' AND tesuser_tes_id="'.$tes_id.'"';
+        }
+        $order = '';
+        if($urutkan=='soal'){
+            $order = 'tessoal_soal_id ASC';
+        }else{
+            $order = 'tesuser_id ASC';
+        }
+
+        $this->db->select('cbt_tes_soal.tessoal_id, cbt_tes_soal.tessoal_jawaban_text, cbt_tes.*, cbt_soal.*, cbt_user.user_name, cbt_user.user_firstname, cbt_user_grup.grup_nama')
+                 ->where('(soal_tipe="2" AND tessoal_jawaban_text IS NOT NULL AND tessoal_comment IS NULL '.$sql.' )')
+                 ->from($this->table)
+                 ->join('cbt_user', 'cbt_tes_user.tesuser_user_id = cbt_user.user_id')
+                 ->join('cbt_user_grup', 'cbt_user.user_grup_id = cbt_user_grup.grup_id')
+                 ->join('cbt_tes', 'cbt_tes_user.tesuser_tes_id = cbt_tes.tes_id')
+                 ->join('cbt_tes_soal', 'cbt_tes_soal.tessoal_tesuser_id = cbt_tes_user.tesuser_id')
+                 ->join('cbt_soal', 'cbt_tes_soal.tessoal_soal_id = cbt_soal.soal_id')
+                 ->order_by($order);
+        return $this->db->get();
+    }
+
+    function get_evaluasi_export_soal($tes_id, $urutkan){
+        $order = '';
+        if($urutkan=='soal'){
+            $order = 'cbt_soal.soal_id ASC';
+        }else{
+            $order = 'cbt_tes_soal.tessoal_order ASC';
+        }
+
+        $this->db->select('cbt_soal.soal_id, cbt_soal.soal_detail, MIN(cbt_tes_soal.tessoal_order) AS nomor_soal')
+                 ->where('(tesuser_tes_id="'.$tes_id.'" AND soal_tipe="2" AND tessoal_jawaban_text IS NOT NULL)')
+                 ->from($this->table)
+                 ->join('cbt_tes_soal', 'cbt_tes_soal.tessoal_tesuser_id = cbt_tes_user.tesuser_id')
+                 ->join('cbt_soal', 'cbt_tes_soal.tessoal_soal_id = cbt_soal.soal_id')
+                 ->group_by('cbt_soal.soal_id')
+                 ->order_by($order);
+        return $this->db->get();
+    }
+
+    function get_evaluasi_export_peserta($tes_id, $urutkan){
+        $order = '';
+        if($urutkan=='user'){
+            $order = 'cbt_user.user_firstname ASC';
+        }else{
+            $order = 'cbt_tes_user.tesuser_id ASC';
+        }
+
+        $this->db->select('
+                    cbt_tes.tes_nama,
+                    cbt_tes_user.tesuser_id,
+                    cbt_user.user_name,
+                    cbt_user.user_firstname,
+                    cbt_user_grup.grup_nama,
+                    cbt_soal.soal_id,
+                    cbt_tes_soal.tessoal_nilai
+                ')
+                 ->where('(tesuser_tes_id="'.$tes_id.'" AND soal_tipe="2" AND tessoal_jawaban_text IS NOT NULL)')
+                 ->from($this->table)
+                 ->join('cbt_user', 'cbt_tes_user.tesuser_user_id = cbt_user.user_id')
+                 ->join('cbt_user_grup', 'cbt_user.user_grup_id = cbt_user_grup.grup_id')
+                 ->join('cbt_tes', 'cbt_tes_user.tesuser_tes_id = cbt_tes.tes_id')
+                 ->join('cbt_tes_soal', 'cbt_tes_soal.tessoal_tesuser_id = cbt_tes_user.tesuser_id')
+                 ->join('cbt_soal', 'cbt_tes_soal.tessoal_soal_id = cbt_soal.soal_id')
+                 ->order_by($order.', cbt_tes_soal.tessoal_order ASC');
+        return $this->db->get();
+    }
+
+    function get_komposisi_soal($tes_id){
+        $this->db->select('
+                    SUM(tset_jumlah) AS total_soal,
+                    SUM(CASE WHEN tset_tipe="2" THEN tset_jumlah ELSE 0 END) AS total_essay,
+                    SUM(CASE WHEN tset_tipe!="2" THEN tset_jumlah ELSE 0 END) AS total_objektif
+                ', false)
+                 ->where('tset_tes_id', $tes_id)
+                 ->from('cbt_tes_topik_set');
+        return $this->db->get();
+    }
+
+    function get_komposisi_soal_aktual($tes_id){
+        $tesuser_sql = 'SELECT tesuser_id FROM cbt_tes_user WHERE tesuser_tes_id="'.$tes_id.'" ORDER BY tesuser_id DESC LIMIT 1';
+
+        $this->db->select('
+                    COUNT(*) AS total_soal,
+                    SUM(CASE WHEN soal_tipe="2" THEN 1 ELSE 0 END) AS total_essay,
+                    SUM(CASE WHEN soal_tipe!="2" THEN 1 ELSE 0 END) AS total_objektif
+                ', false)
+                 ->where('tessoal_tesuser_id = ('.$tesuser_sql.')')
+                 ->from('cbt_tes_soal')
+                 ->join('cbt_soal', 'cbt_tes_soal.tessoal_soal_id = cbt_soal.soal_id');
+        return $this->db->get();
+    }
+
+    function get_tesuser_by_tessoal($tessoal_id){
+        $this->db->select('cbt_tes_user.tesuser_id, cbt_tes_user.tesuser_tes_id')
+                 ->where('cbt_tes_soal.tessoal_id', $tessoal_id)
+                 ->from('cbt_tes_soal')
+                 ->join('cbt_tes_user', 'cbt_tes_soal.tessoal_tesuser_id = cbt_tes_user.tesuser_id')
+                 ->limit(1);
+        return $this->db->get();
+    }
+
+    function get_komposisi_soal_by_tesuser($tesuser_id){
+        $this->db->select('
+                    COUNT(*) AS total_soal,
+                    SUM(CASE WHEN soal_tipe="2" THEN 1 ELSE 0 END) AS total_essay,
+                    SUM(CASE WHEN soal_tipe!="2" THEN 1 ELSE 0 END) AS total_objektif
+                ', false)
+                 ->where('tessoal_tesuser_id', $tesuser_id)
+                 ->from('cbt_tes_soal')
+                 ->join('cbt_soal', 'cbt_tes_soal.tessoal_soal_id = cbt_soal.soal_id');
+        return $this->db->get();
+    }
+
     function get_datatable_evaluasi_count($tes_id, $order){
         $sql = '';
         if(!empty($tes_id)){
