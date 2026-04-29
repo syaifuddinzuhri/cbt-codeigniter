@@ -406,9 +406,16 @@ class Tes_evaluasi extends Member_Controller {
                 $soal_id = intval($worksheet->getCellByColumnAndRow($kolom, $soal_id_row)->getValue());
                 $nilai_cell = $worksheet->getCellByColumnAndRow($kolom, $row)->getCalculatedValue();
 
-                if($soal_id<=0 OR $nilai_cell==='' OR $nilai_cell===null){
+                if($soal_id<=0){
                     continue;
                 }
+
+                if($nilai_cell==='' OR $nilai_cell===null){
+                    $nilai_cell = 0;
+                }
+
+                $nilai_cell = trim((string) $nilai_cell);
+                $nilai_cell = str_replace(',', '.', $nilai_cell);
 
                 if(!is_numeric($nilai_cell)){
                     $jmldataerror++;
@@ -424,10 +431,11 @@ class Tes_evaluasi extends Member_Controller {
                 }
 
                 $affected = $this->cbt_tes_soal_model->update_nilai_essay_import($tes_id, $tesuser_id, $soal_id, $nilai, $this->access->get_username());
-                if($affected>=0){
+                if($affected>0){
                     $jmldatasukses++;
                 }else{
                     $jmldataerror++;
+                    $pesan_error .= 'Baris '.$row.' kolom '.PHPExcel_Cell::stringFromColumnIndex($kolom).' tidak cocok dengan data peserta/soal<br>';
                 }
             }
         }

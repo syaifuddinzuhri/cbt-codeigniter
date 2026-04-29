@@ -46,7 +46,7 @@ class Cbt_tes_soal_model extends CI_Model{
                   AND cbt_tes_soal.tessoal_tesuser_id = ?
                   AND cbt_tes_soal.tessoal_soal_id = ?
                   AND cbt_soal.soal_tipe = "2"';
-        $this->db->query($sql, array($nilai, 'Import nilai '.$username, $tes_id, $tesuser_id, $soal_id));
+        $this->db->query($sql, array($nilai, 'Import nilai '.$username.' '.date('Y-m-d H:i:s'), $tes_id, $tesuser_id, $soal_id));
         return 1;
     }
 
