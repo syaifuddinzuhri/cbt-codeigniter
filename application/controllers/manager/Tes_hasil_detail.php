@@ -36,18 +36,22 @@ class Tes_hasil_detail extends Member_Controller {
         	if($query_testuser->num_rows()>0){
         		$query_testuser = $query_testuser->row();
 
-        		$query_test = $this->cbt_tes_model->get_by_kolom_limit('tes_id', $query_testuser->tesuser_tes_id, 1)->row();
-        		$query_user = $this->cbt_user_model->get_by_kolom_limit('user_id', $query_testuser->tesuser_user_id, 1)->row();
+                $query_test = $this->cbt_tes_model->get_by_kolom_limit('tes_id', $query_testuser->tesuser_tes_id, 1)->row();
+                $query_user = $this->cbt_user_model->get_by_kolom_limit('user_id', $query_testuser->tesuser_user_id, 1)->row();
+                $this->cbt_tes_soal_model->normalisasi_nilai_tes($query_testuser->tesuser_tes_id);
+                $query_test = $this->cbt_tes_model->get_by_kolom_limit('tes_id', $query_testuser->tesuser_tes_id, 1)->row();
 
-        		$data['tes_user_id'] = $tesuser_id;
-        		$data['tes_nama'] = $query_test->tes_nama;
+                $data['tes_user_id'] = $tesuser_id;
+                $data['tes_nama'] = $query_test->tes_nama;
         		$data['tes_mulai'] = $query_testuser->tesuser_creation_time;
         		$data['user_nama'] = $query_user->user_firstname;
 
-        		$nilai = $this->cbt_tes_soal_model->get_nilai($tesuser_id)->row();
-        		$data['nilai'] = $nilai->hasil.'  /  '.$query_test->tes_max_score.'  (nilai / nilai maksimal) ';
+                $nilai = $this->cbt_tes_soal_model->get_nilai_ringkasan($tesuser_id)->row();
+                $data['nilai'] = $nilai->total_nilai.'  /  '.$query_test->tes_max_score.'  (nilai / nilai maksimal) ';
+                $data['nilai_detail'] = 'Objektif: '.$nilai->nilai_objektif.' + Essay: '.$nilai->nilai_essay;
 
-        		$data['benar'] = ($nilai->total_soal-$nilai->jawaban_salah).'  /  '.$nilai->total_soal.'  (jawaban benar / total soal)';
+                $data['benar'] = $nilai->objektif_benar.'  /  '.$nilai->total_objektif.'  (jawaban objektif benar)';
+                $data['essay'] = $nilai->essay_dinilai.'  /  '.$nilai->total_essay.'  (essay sudah bernilai)';
 
         		$this->template->display_admin($this->kelompok.'/tes_hasil_detail_view', 'Hasil Tes Detail', $data);
         	}else{

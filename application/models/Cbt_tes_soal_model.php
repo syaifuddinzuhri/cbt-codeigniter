@@ -49,7 +49,42 @@ class Cbt_tes_soal_model extends CI_Model{
         $this->db->query($sql, array($nilai, 'Import nilai '.$username, $tes_id, $tesuser_id, $soal_id));
         return 1;
     }
-    
+
+    function normalisasi_nilai_tes($tes_id){
+        $this->db->where('tes_id', $tes_id)
+                 ->update('cbt_tes', array(
+                    'tes_score_right' => 1,
+                    'tes_score_wrong' => 0,
+                    'tes_score_unanswered' => 0,
+                    'tes_max_score' => 100
+                 ));
+
+        $sql = 'UPDATE cbt_tes_soal ts
+                JOIN cbt_soal s ON ts.tessoal_soal_id = s.soal_id
+                JOIN cbt_tes_user tu ON ts.tessoal_tesuser_id = tu.tesuser_id
+                JOIN (
+                    SELECT
+                        tu2.tesuser_id,
+                        SUM(CASE WHEN s2.soal_tipe = 2 THEN 1 ELSE 0 END) AS essay_count,
+                        SUM(CASE WHEN s2.soal_tipe != 2 THEN 1 ELSE 0 END) AS objektif_count
+                    FROM cbt_tes_user tu2
+                    JOIN cbt_tes_soal ts2 ON ts2.tessoal_tesuser_id = tu2.tesuser_id
+                    JOIN cbt_soal s2 ON ts2.tessoal_soal_id = s2.soal_id
+                    WHERE tu2.tesuser_tes_id = ?
+                    GROUP BY tu2.tesuser_id
+                ) komposisi ON komposisi.tesuser_id = tu.tesuser_id
+                SET ts.tessoal_nilai =
+                    CASE
+                        WHEN komposisi.essay_count > 0 THEN 1
+                        WHEN komposisi.objektif_count > 0 THEN ROUND(100 / komposisi.objektif_count, 4)
+                        ELSE ts.tessoal_nilai
+                    END
+                WHERE tu.tesuser_tes_id = ?
+                  AND s.soal_tipe != "2"
+                  AND ts.tessoal_nilai > 0';
+        $this->db->query($sql, array($tes_id, $tes_id));
+    }
+
     function count_by_kolom($kolom, $isi){
         $this->db->select('COUNT(*) AS hasil')
                  ->where($kolom, $isi)
@@ -129,6 +164,22 @@ class Cbt_tes_soal_model extends CI_Model{
 
     function get_nilai($tessoal_id){
         $sql = 'SELECT SUM(tessoal_nilai) AS hasil, COUNT(CASE  WHEN tessoal_nilai=0 THEN 1 END) AS jawaban_salah, COUNT(*) AS total_soal FROM cbt_tes_soal WHERE tessoal_tesuser_id="'.$tessoal_id.'"';
+        return $this->db->query($sql);
+    }
+
+    function get_nilai_ringkasan($tesuser_id){
+        $sql = 'SELECT
+                    SUM(ts.tessoal_nilai) AS total_nilai,
+                    SUM(CASE WHEN s.soal_tipe != 2 THEN ts.tessoal_nilai ELSE 0 END) AS nilai_objektif,
+                    SUM(CASE WHEN s.soal_tipe = 2 THEN ts.tessoal_nilai ELSE 0 END) AS nilai_essay,
+                    SUM(CASE WHEN s.soal_tipe != 2 AND ts.tessoal_nilai > 0 THEN 1 ELSE 0 END) AS objektif_benar,
+                    SUM(CASE WHEN s.soal_tipe != 2 THEN 1 ELSE 0 END) AS total_objektif,
+                    SUM(CASE WHEN s.soal_tipe = 2 AND ts.tessoal_nilai > 0 THEN 1 ELSE 0 END) AS essay_dinilai,
+                    SUM(CASE WHEN s.soal_tipe = 2 THEN 1 ELSE 0 END) AS total_essay,
+                    COUNT(*) AS total_soal
+                FROM cbt_tes_soal ts
+                JOIN cbt_soal s ON ts.tessoal_soal_id = s.soal_id
+                WHERE ts.tessoal_tesuser_id="'.$tesuser_id.'"';
         return $this->db->query($sql);
     }
 	

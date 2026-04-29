@@ -46,12 +46,19 @@
                             <label class="col-sm-3 control-label">Nilai</label>
                             <div class="col-sm-9">
                                 <input type="text" name="tes-nilai" id="tes-nilai" class="form-control input-sm" value="<?php if(!empty($nilai)){ echo $nilai; } ?>" readonly>
+                                <p class="help-block"><?php if(!empty($nilai_detail)){ echo $nilai_detail; } ?></p>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-3 control-label">Benar</label>
                             <div class="col-sm-9">
                                 <input type="text" name="tes-benar" id="tes-benar" class="form-control input-sm" value="<?php if(!empty($benar)){ echo $benar; } ?>" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">Essay</label>
+                            <div class="col-sm-9">
+                                <input type="text" name="tes-essay" id="tes-essay" class="form-control input-sm" value="<?php if(!empty($essay)){ echo $essay; } ?>" readonly>
                             </div>
                         </div>
                     </div>
