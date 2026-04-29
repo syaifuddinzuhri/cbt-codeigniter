@@ -294,6 +294,7 @@ class Tes_evaluasi extends Member_Controller {
     }
 
     function import_nilai(){
+        header('Content-Type: application/json');
         $status['status'] = 0;
         $status['pesan'] = 'Import nilai gagal';
 
@@ -323,9 +324,14 @@ class Tes_evaluasi extends Member_Controller {
             return;
         }
 
-        $upload_data = $this->upload->data();
-        $hasil = $this->import_file_nilai($tes_id, $upload_data['file_name']);
-        echo json_encode($hasil);
+        try{
+            $upload_data = $this->upload->data();
+            $hasil = $this->import_file_nilai($tes_id, $upload_data['file_name']);
+            echo json_encode($hasil);
+        }catch(Exception $e){
+            $status['pesan'] = 'Terjadi kesalahan saat membaca/import Excel: '.$e->getMessage();
+            echo json_encode($status);
+        }
     }
 
     private function import_file_nilai($tes_id, $inputfile){
@@ -477,67 +483,77 @@ class Tes_evaluasi extends Member_Controller {
     }
     
 	function get_datatable(){
+        header('Content-Type: application/json');
 		// variable initialization
 		$tes_id = $this->input->get('tes');
 		$urutkan = $this->input->get('urutkan');
+        $sEcho = isset($_GET['sEcho']) ? intval($_GET['sEcho']) : 1;
 
-		$search = "";
-		$start = 0;
-		$rows = 10;
+        try{
+            $search = "";
+            $start = 0;
+            $rows = 10;
 
-		// get search value (if any)
-		if (isset($_GET['sSearch']) && $_GET['sSearch'] != "" ) {
-			$search = $_GET['sSearch'];
-		}
+            // get search value (if any)
+            if (isset($_GET['sSearch']) && $_GET['sSearch'] != "" ) {
+                $search = $_GET['sSearch'];
+            }
 
-		// limit
-		$start = $this->get_start();
-		$rows = $this->get_rows();
+            // limit
+            $start = $this->get_start();
+            $rows = $this->get_rows();
 
-		// run query to get user listing
-		$query = $this->cbt_tes_user_model->get_datatable_evaluasi($start, $rows, $tes_id, $urutkan);
-		$iFilteredTotal = $query->num_rows();
-		
-		$iTotal= $this->cbt_tes_user_model->get_datatable_evaluasi_count($tes_id, $urutkan)->row()->hasil;
-	    
-		$output = array(
-			"sEcho" => intval($_GET['sEcho']),
-	        "iTotalRecords" => $iTotal,
-	        "iTotalDisplayRecords" => $iTotal,
-	        "aaData" => array()
-	    );
+            // run query to get user listing
+            $query = $this->cbt_tes_user_model->get_datatable_evaluasi($start, $rows, $tes_id, $urutkan);
+            $iFilteredTotal = $query->num_rows();
 
-	    // get result after running query and put it in array
-		$i=$start;
-		$query = $query->result();
-	    foreach ($query as $temp) {			
-			$record = array();
+            $iTotal= $this->cbt_tes_user_model->get_datatable_evaluasi_count($tes_id, $urutkan)->row()->hasil;
 
-            $soal = $temp->soal_detail;
-            $soal = str_replace("[base_url]", base_url(), $soal);
-            
-			$record[] = ++$i;
-            $record[] = stripslashes($temp->user_firstname).' ('.$temp->user_name.')';
-            $record[] = $soal;
-			// $record[] = '<div style="width:600px;"><pre style="white-space: pre-wrap;word-wrap: break-word;">'.$temp->tessoal_jawaban_text.'</pre></div>';
+            $output = array(
+                "sEcho" => $sEcho,
+                "iTotalRecords" => $iTotal,
+                "iTotalDisplayRecords" => $iTotal,
+                "aaData" => array()
+            );
 
-			$jawaban = $temp->tessoal_jawaban_text;
-			// Menambah tag br untuk baris baru
-			$jawaban = str_replace("\r","<br />",$jawaban);
-			$jawaban = str_replace("\n","<br />",$jawaban);
-			
-			$record[] = $jawaban;
+            // get result after running query and put it in array
+            $i=$start;
+            $query = $query->result();
+            foreach ($query as $temp) {
+                $record = array();
 
-            $nilai_maksimal_essay = $this->get_nilai_maksimal_essay_by_tessoal($temp->tessoal_id);
+                $soal = $temp->soal_detail;
+                $soal = str_replace("[base_url]", base_url(), $soal);
 
-            $record[] = '<a onclick="evaluasi(\''.$temp->tessoal_id.'\',\'0\',\''.$nilai_maksimal_essay.'\')" style="cursor: pointer;" class="btn btn-default btn-xs">Evaluasi</a>';
-            
+                $record[] = ++$i;
+                $record[] = stripslashes($temp->user_firstname).' ('.$temp->user_name.')';
+                $record[] = $soal;
+                // $record[] = '<div style="width:600px;"><pre style="white-space: pre-wrap;word-wrap: break-word;">'.$temp->tessoal_jawaban_text.'</pre></div>';
 
-			$output['aaData'][] = $record;
-		}
-		// format it to JSON, this output will be displayed in datatable
-        
-		echo json_encode($output);
+                $jawaban = $temp->tessoal_jawaban_text;
+                // Menambah tag br untuk baris baru
+                $jawaban = str_replace("\r","<br />",$jawaban);
+                $jawaban = str_replace("\n","<br />",$jawaban);
+
+                $record[] = $jawaban;
+
+                $nilai_maksimal_essay = $this->get_nilai_maksimal_essay_by_tessoal($temp->tessoal_id);
+
+                $record[] = '<a onclick="evaluasi(\''.$temp->tessoal_id.'\',\'0\',\''.$nilai_maksimal_essay.'\')" style="cursor: pointer;" class="btn btn-default btn-xs">Evaluasi</a>';
+
+                $output['aaData'][] = $record;
+            }
+            // format it to JSON, this output will be displayed in datatable
+            echo json_encode($output);
+        }catch(Exception $e){
+            echo json_encode(array(
+                "sEcho" => $sEcho,
+                "iTotalRecords" => 0,
+                "iTotalDisplayRecords" => 0,
+                "aaData" => array(),
+                "error" => $e->getMessage()
+            ));
+        }
 	}
 	
 	/**

@@ -203,11 +203,11 @@
                     url:"<?php echo site_url().'/'.$url; ?>/import_nilai",
                     type:"POST",
                     data:formData,
+                    dataType:"json",
                     cache:false,
                     contentType:false,
                     processData:false,
-                    success:function(respon){
-                        var obj = $.parseJSON(respon);
+                    success:function(obj){
                         $("#modal-proses").modal('hide');
                         if(obj.status==1){
                             $('#form-pesan-import').html(pesan_succ(obj.pesan));
@@ -216,6 +216,14 @@
                         }else{
                             $('#form-pesan-import').html(pesan_err(obj.pesan));
                         }
+                    },
+                    error:function(xhr){
+                        $("#modal-proses").modal('hide');
+                        var pesan = xhr.responseText;
+                        if(pesan.length>500){
+                            pesan = pesan.substring(0, 500);
+                        }
+                        $('#form-pesan-import').html(pesan_err('Import gagal. Server mengembalikan error:<br>'+pesan));
                     }
             });
             return false;
