@@ -341,7 +341,8 @@ class Cbt_tes_user_model extends CI_Model{
                     cbt_user.user_firstname,
                     cbt_user_grup.grup_nama,
                     cbt_soal.soal_id,
-                    cbt_tes_soal.tessoal_nilai
+                    cbt_tes_soal.tessoal_nilai,
+                    cbt_tes_soal.tessoal_jawaban_text
                 ')
                  ->where('(tesuser_tes_id="'.$tes_id.'" AND soal_tipe="2" AND tessoal_jawaban_text IS NOT NULL)')
                  ->from($this->table)

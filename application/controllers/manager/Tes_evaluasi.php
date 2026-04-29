@@ -180,10 +180,12 @@ class Tes_evaluasi extends Member_Controller {
                         $peserta[$temp->tesuser_id] = array(
                             'tesuser_id' => $temp->tesuser_id,
                             'nama' => stripslashes($temp->user_firstname),
-                            'nilai' => array()
+                            'nilai' => array(),
+                            'jawaban' => array()
                         );
                     }
                     $peserta[$temp->tesuser_id]['nilai'][$temp->soal_id] = $temp->tessoal_nilai;
+                    $peserta[$temp->tesuser_id]['jawaban'][$temp->soal_id] = $temp->tessoal_jawaban_text;
                 }
             }
 
@@ -209,6 +211,8 @@ class Tes_evaluasi extends Member_Controller {
             $question_end_column = $question_start_column+count($soal_essay)-1;
             $poin_max_total_column = $question_start_column+count($soal_essay);
             $total_column = $poin_max_total_column+1;
+            $jawaban_start_column = $total_column+2;
+            $jawaban_end_column = $jawaban_start_column+count($soal_essay)-1;
             $last_question_column = PHPExcel_Cell::stringFromColumnIndex(max($question_start_column, $question_end_column));
 
             if(count($soal_essay)>0){
@@ -217,6 +221,13 @@ class Tes_evaluasi extends Member_Controller {
                 $worksheet->setCellValueByColumnAndRow($question_start_column, $soal_header_row, 'Soal');
                 $worksheet->getStyle($first_question_column.$soal_header_row.':'.$last_question_column.$soal_header_row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
                 $worksheet->getStyle($first_question_column.$soal_header_row.':'.$last_question_column.$soal_header_row)->getFont()->setBold(true);
+
+                $first_answer_column = PHPExcel_Cell::stringFromColumnIndex($jawaban_start_column);
+                $last_answer_column = PHPExcel_Cell::stringFromColumnIndex($jawaban_end_column);
+                $worksheet->mergeCells($first_answer_column.$soal_header_row.':'.$last_answer_column.$soal_header_row);
+                $worksheet->setCellValueByColumnAndRow($jawaban_start_column, $soal_header_row, 'Jawaban Peserta');
+                $worksheet->getStyle($first_answer_column.$soal_header_row.':'.$last_answer_column.$soal_header_row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $worksheet->getStyle($first_answer_column.$soal_header_row.':'.$last_answer_column.$soal_header_row)->getFont()->setBold(true);
             }
 
             $worksheet->setCellValueByColumnAndRow($question_start_column-1, $soal_id_row, 'Soal ID');
@@ -236,8 +247,11 @@ class Tes_evaluasi extends Member_Controller {
             }
             $worksheet->setCellValueByColumnAndRow($poin_max_total_column, $header_row, 'Poin Max Total');
             $worksheet->setCellValueByColumnAndRow($total_column, $header_row, 'Total');
+            foreach($soal_essay as $index => $soal){
+                $worksheet->setCellValueByColumnAndRow($jawaban_start_column+$index, $header_row, 'Jawaban '.$soal['nomor']);
+            }
 
-            $last_header_column = PHPExcel_Cell::stringFromColumnIndex($total_column);
+            $last_header_column = PHPExcel_Cell::stringFromColumnIndex(max($total_column, $jawaban_end_column));
             $worksheet->getStyle('A'.$header_row.':'.$last_header_column.$header_row)->getFont()->setBold(true);
 
             $row = $header_row+1;
@@ -256,6 +270,14 @@ class Tes_evaluasi extends Member_Controller {
                         $nilai = $data_peserta['nilai'][$soal['id']];
                     }
                     $worksheet->setCellValueByColumnAndRow($question_start_column+$index, $row, $nilai);
+
+                    $jawaban = '';
+                    if(isset($data_peserta['jawaban'][$soal['id']])){
+                        $jawaban = $data_peserta['jawaban'][$soal['id']];
+                        $jawaban = str_replace(array("\r\n", "\r", "\n"), "\n", $jawaban);
+                        $jawaban = html_entity_decode(strip_tags($jawaban), ENT_QUOTES, 'UTF-8');
+                    }
+                    $worksheet->setCellValueByColumnAndRow($jawaban_start_column+$index, $row, $jawaban);
                 }
 
                 if(count($soal_essay)>0){
@@ -282,6 +304,14 @@ class Tes_evaluasi extends Member_Controller {
             }
             $worksheet->getColumnDimension(PHPExcel_Cell::stringFromColumnIndex($poin_max_total_column))->setWidth(16);
             $worksheet->getColumnDimension(PHPExcel_Cell::stringFromColumnIndex($total_column))->setWidth(12);
+            for($kolom = $jawaban_start_column; $kolom <= $jawaban_end_column; $kolom++){
+                $worksheet->getColumnDimension(PHPExcel_Cell::stringFromColumnIndex($kolom))->setWidth(35);
+            }
+            if(count($soal_essay)>0){
+                $first_answer_column = PHPExcel_Cell::stringFromColumnIndex($jawaban_start_column);
+                $last_answer_column = PHPExcel_Cell::stringFromColumnIndex($jawaban_end_column);
+                $worksheet->getStyle($first_answer_column.':'.$last_answer_column)->getAlignment()->setWrapText(true);
+            }
 
             $filename='Data Evaluasi Essay - '.date('Y-m-d H:i').'.xlsx';
             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
