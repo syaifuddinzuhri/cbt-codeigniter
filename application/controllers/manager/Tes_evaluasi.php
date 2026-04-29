@@ -347,7 +347,7 @@ class Tes_evaluasi extends Member_Controller {
 
         $header_row = 0;
         for($row=1; $row<=$highestRow; $row++){
-            $kolom_no = trim($worksheet->getCellByColumnAndRow(0, $row)->getValue());
+            $kolom_no = trim((string) $worksheet->getCellByColumnAndRow(0, $row)->getValue());
             if($kolom_no=='No.'){
                 $header_row = $row;
                 break;
@@ -364,7 +364,7 @@ class Tes_evaluasi extends Member_Controller {
         $poin_max_total_column = -1;
 
         for($kolom=0; $kolom<$highestColumnIndex; $kolom++){
-            $header = trim($worksheet->getCellByColumnAndRow($kolom, $header_row)->getValue());
+            $header = trim((string) $worksheet->getCellByColumnAndRow($kolom, $header_row)->getValue());
             if($header=='Tes User ID'){
                 $tesuser_column = $kolom;
             }else if($header=='Poin Max'){
