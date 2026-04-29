@@ -99,14 +99,22 @@ class Laporan_analisis_butir_soal extends Member_Controller {
 					if($query_soal_tes->num_rows()){
 						$query_soal_tes = $query_soal_tes->result();
 						$kolom = 3;
+                        $total_nilai = 0;
 						foreach ($query_soal_tes as $soal_tes) {
-							if($soal_tes->tessoal_nilai>0){
-								$worksheet->setCellValueByColumnAndRow($kolom, $row, '1');
-							}else{
-								$worksheet->setCellValueByColumnAndRow($kolom, $row, '0');
-							}
+                            if($soal_tes->soal_tipe==2){
+                                $nilai = floatval($soal_tes->tessoal_nilai);
+                            }else if($soal_tes->tessoal_nilai>0){
+                                $nilai = 1;
+                            }else{
+                                $nilai = 0;
+                            }
+
+                            $worksheet->setCellValueByColumnAndRow($kolom, $row, $nilai);
+                            $total_nilai = $total_nilai+$nilai;
 							$kolom++;
 						}
+                        $worksheet->setCellValueByColumnAndRow($kolom, 7, 'Total');
+                        $worksheet->setCellValueByColumnAndRow($kolom, $row, $total_nilai);
 					}
 
                     $row++;
