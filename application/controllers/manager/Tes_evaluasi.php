@@ -432,6 +432,7 @@ class Tes_evaluasi extends Member_Controller {
             }
         }
         $this->db->trans_complete();
+        $this->normalisasi_nilai_tes($tes_id);
 
         if($jmldatasukses>0 AND $jmldataerror==0){
             $status['status'] = 1;
@@ -439,12 +440,46 @@ class Tes_evaluasi extends Member_Controller {
             $status['status'] = 1;
         }
 
-        $status['pesan'] = 'Import selesai. Nilai berhasil diproses: '.$jmldatasukses.'. Error: '.$jmldataerror;
+        $status['pesan'] = 'Import selesai. Nilai berhasil diproses: '.$jmldatasukses.'. Error: '.$jmldataerror.'. Poin PG dan nilai maksimal tes sudah dinormalisasi.';
         if(!empty($pesan_error)){
             $status['pesan'] .= '<br>'.$pesan_error;
         }
 
         return $status;
+    }
+
+    private function normalisasi_nilai_tes($tes_id){
+        $this->cbt_tes_model->update('tes_id', $tes_id, array(
+            'tes_score_right' => 1,
+            'tes_score_wrong' => 0,
+            'tes_score_unanswered' => 0,
+            'tes_max_score' => 100
+        ));
+
+        $sql = 'UPDATE cbt_tes_soal ts
+                JOIN cbt_soal s ON ts.tessoal_soal_id = s.soal_id
+                JOIN cbt_tes_user tu ON ts.tessoal_tesuser_id = tu.tesuser_id
+                JOIN (
+                    SELECT
+                        tu2.tesuser_id,
+                        SUM(CASE WHEN s2.soal_tipe = 2 THEN 1 ELSE 0 END) AS essay_count,
+                        SUM(CASE WHEN s2.soal_tipe != 2 THEN 1 ELSE 0 END) AS objektif_count
+                    FROM cbt_tes_user tu2
+                    JOIN cbt_tes_soal ts2 ON ts2.tessoal_tesuser_id = tu2.tesuser_id
+                    JOIN cbt_soal s2 ON ts2.tessoal_soal_id = s2.soal_id
+                    WHERE tu2.tesuser_tes_id = ?
+                    GROUP BY tu2.tesuser_id
+                ) komposisi ON komposisi.tesuser_id = tu.tesuser_id
+                SET ts.tessoal_nilai =
+                    CASE
+                        WHEN komposisi.essay_count > 0 THEN 1
+                        WHEN komposisi.objektif_count > 0 THEN ROUND(100 / komposisi.objektif_count, 4)
+                        ELSE ts.tessoal_nilai
+                    END
+                WHERE tu.tesuser_tes_id = ?
+                  AND s.soal_tipe != "2"
+                  AND ts.tessoal_nilai > 0';
+        $this->db->query($sql, array($tes_id, $tes_id));
     }
 
     private function get_nilai_maksimal_essay_by_tessoal_id_tesuser($tesuser_id){

@@ -24,6 +24,19 @@ class Cbt_tes_soal_model extends CI_Model{
     }
 
     function update_nilai_essay_import($tes_id, $tesuser_id, $soal_id, $nilai, $username){
+        $this->db->select('COUNT(*) AS hasil')
+                 ->where('cbt_tes_user.tesuser_tes_id', $tes_id)
+                 ->where('cbt_tes_soal.tessoal_tesuser_id', $tesuser_id)
+                 ->where('cbt_tes_soal.tessoal_soal_id', $soal_id)
+                 ->where('cbt_soal.soal_tipe', '2')
+                 ->from($this->table)
+                 ->join('cbt_soal', 'cbt_tes_soal.tessoal_soal_id = cbt_soal.soal_id')
+                 ->join('cbt_tes_user', 'cbt_tes_soal.tessoal_tesuser_id = cbt_tes_user.tesuser_id');
+        $query = $this->db->get();
+        if($query->row()->hasil<1){
+            return -1;
+        }
+
         $sql = 'UPDATE cbt_tes_soal
                 JOIN cbt_soal ON cbt_tes_soal.tessoal_soal_id = cbt_soal.soal_id
                 JOIN cbt_tes_user ON cbt_tes_soal.tessoal_tesuser_id = cbt_tes_user.tesuser_id
@@ -34,7 +47,7 @@ class Cbt_tes_soal_model extends CI_Model{
                   AND cbt_tes_soal.tessoal_soal_id = ?
                   AND cbt_soal.soal_tipe = "2"';
         $this->db->query($sql, array($nilai, 'Import nilai '.$username, $tes_id, $tesuser_id, $soal_id));
-        return $this->db->affected_rows();
+        return 1;
     }
     
     function count_by_kolom($kolom, $isi){
